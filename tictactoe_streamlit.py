@@ -8,15 +8,58 @@ styling = '''
 [data-testid="baseButton-secondary"], [data-testid="baseButton-primary"]{
 width:100px;
 height:100px;
-font-size:large;
 }
 [data-testid="stAppViewBlockContainer"]{
-padding: 6rem 1rem 6rem;
+padding: 1rem 1rem 1rem;
+}
+[data-testid="stVerticalBlockBorderWrapper"]{
+/*max-width:371px;*/
+}
+[data-testid="column"]{
+width:102px;
 }
 
 @media (max-width:640px){
+    [data-testid="baseButton-secondary"], [data-testid="baseButton-primary"]{
+    width:75px;
+    height:75px;
+    }
+
     [data-testid="column"]{
-    max-width:102px;
+    width:77px;
+    }
+}
+
+@media (max-width:335px){
+    [data-testid="baseButton-secondary"], [data-testid="baseButton-primary"]{
+    width:50px;
+    height:50px;
+    }
+
+    [data-testid="column"]{
+    width:52px;
+    }
+}
+
+@media (max-width:260px){
+    [data-testid="baseButton-secondary"], [data-testid="baseButton-primary"]{
+    width:38px;
+    height:38px;
+    }
+
+    [data-testid="column"]{
+    width:40px;
+    }
+}
+
+@media (max-width:222px){
+    [data-testid="baseButton-secondary"], [data-testid="baseButton-primary"]{
+    width:15px;
+    height:15px;
+    }
+
+    [data-testid="column"]{
+    width:17px;
     }
 }
 </style>
@@ -34,7 +77,7 @@ if "message" not in st.session_state:
     st.session_state["message"]=None
 
 st.markdown(styling, unsafe_allow_html=True)
-st.title("Tic  Tac  Toe(with AI)")
+st.title("Tic Tac Toe:lt (with AI)")
 st.write("AI will predict the best possible move.:lt Here we go")
 container = st.container(border=True)
 row1 = container.columns(3)
@@ -113,15 +156,20 @@ html_string = '''
 <script>
 // this if is for "play_again" button size
 if (window.parent.document.querySelectorAll("p").length == 12){
-window.parent.document.querySelectorAll("p")[11].parentNode.parentNode.style.height="50px";
+
+    window.parent.document.querySelectorAll("p")[11].parentNode.parentNode.style.height="50px";
+    window.parent.document.querySelectorAll("p")[11].parentNode.parentNode.style.width="100px";
+    
 }
 
+// For removing all classes of buttons
 mainNodes= window.parent.document.querySelectorAll(".row-widget")[0].parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.childNodes
 mainNodes.forEach((row)=>{
 row.childNodes.forEach((element)=>{
 element.className=""
 })
 })
+
 </script>
 '''
 html(html_string, height=0, width=0)
