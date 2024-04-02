@@ -1,7 +1,7 @@
 import streamlit as st
 from streamlit.components.v1 import html
 import random
-from checker import get_best_coords_for_streamlit, find_winner, is_empty
+from checker import get_best_coords_for_streamlit, find_winner
 
 styling = '''
 <style>
@@ -11,9 +11,6 @@ height:100px;
 }
 [data-testid="stAppViewBlockContainer"]{
 padding: 1rem 1rem 1rem;
-}
-[data-testid="stVerticalBlockBorderWrapper"]{
-/*max-width:371px;*/
 }
 [data-testid="column"]{
 width:102px;
@@ -68,38 +65,72 @@ width:102px;
 def reset_board():
     st.session_state["board"]=[["_", "_", "_"],["_", "_", "_"],["_", "_", "_"]]
     st.session_state["playable"]=True
+    st.session_state["play_again"]=False
+    st.session_state["first_move_X"]=False
+    st.session_state["first_random_move_O"]=True
     print("---New Game started---")
 
 if "board" not in st.session_state:
     reset_board()
-    st.session_state["play_again"]=False
+    
 if "message" not in st.session_state:
     st.session_state["message"]=None
 
+st.set_page_config(page_title="TIC-TAC-TOE",page_icon="image.png")
 st.markdown(styling, unsafe_allow_html=True)
+
 st.title("Tic Tac Toe:lt (with AI)")
 st.write("AI will predict the best possible move.:lt Here we go")
+human_player = st.radio("Play As",["X", "O"], horizontal=True)
 container = st.container(border=True)
 row1 = container.columns(3)
 row2 = container.columns(3)
 row3 = container.columns(3)
 
+if human_player=="O" and st.session_state["first_random_move_O"]:
+    reset_board()
+    i=random.randint(0,2)
+    j=random.randint(0,2)
+    st.session_state["board"][i][j]="X"
+    print("\nAI choose:", [i,j],"(randomly)\n")
+    st.session_state["first_random_move_O"]=False
+    st.session_state["first_move_X"]=True
+elif human_player=="X" and st.session_state["first_move_X"]:
+    reset_board()
+    st.session_state["first_move_X"]=False
+    st.session_state["first_random_move_O"]=True
+
 def set_value(coordinates):
     coordinates = list(map(int,list(coordinates)))
     if st.session_state["board"][coordinates[0]][coordinates[1]]=="_" and st.session_state["playable"]:
-        st.session_state["board"][coordinates[0]][coordinates[1]]="X"
+        if human_player=="O":
+            st.session_state["board"][coordinates[0]][coordinates[1]]="O"
+        else:
+            st.session_state["board"][coordinates[0]][coordinates[1]]="X"
         print("\nHuman choose:",coordinates,"\n")
+        
         winning_status = find_winner(st.session_state["board"])
         if winning_status == "INCOMPLETE GAME":
-            now_ai("O")
+            if human_player=="O":
+                now_ai("X")
+            else:
+                now_ai("O")
+        elif winning_status == "O":
+            st.session_state["message"]="HUMAN"
+            st.balloons()
+            st.session_state["play_again"]=True
+            st.session_state["playable"]=False
+            return
         elif winning_status == "X":
             st.session_state["message"]="HUMAN"
             st.balloons()
             st.session_state["play_again"]=True
+            st.session_state["playable"]=False
             return
         elif winning_status=="DRAW":
             st.session_state["message"]="DRAW"
             st.session_state["play_again"]=True
+            st.session_state["playable"]=False
             return
     else:
         st.session_state["message"]="NOT ALLOWED"
@@ -125,15 +156,27 @@ def now_ai(play_as):
         st.session_state["message"]="AI"
         st.balloons()
         st.session_state["play_again"]=True
+        st.session_state["playable"]=False
+        return
+    elif winning_status=="DRAW":
+        st.session_state["message"]="DRAW"
+        st.session_state["play_again"]=True
+        st.session_state["playable"]=False
         return
 
 for i ,row in enumerate([row1, row2, row3]):
     for j in range(3):
-        if st.session_state["board"][i][j]=="O":
-            row[j].button(st.session_state["board"][i][j], key="btn"+str(i)+str(j), on_click=set_value, args=[str(i)+str(j)], type="primary")
-        else:    
-            row[j].button(st.session_state["board"][i][j], key="btn"+str(i)+str(j), on_click=set_value, args=[str(i)+str(j)])
-
+        if human_player=="O":
+            if st.session_state["board"][i][j]=="X":
+                row[j].button(st.session_state["board"][i][j], key="btn"+str(i)+str(j), on_click=set_value, args=[str(i)+str(j)], type="primary")
+            else:
+                row[j].button(st.session_state["board"][i][j], key="btn"+str(i)+str(j), on_click=set_value, args=[str(i)+str(j)])
+        elif human_player=="X":
+            if st.session_state["board"][i][j]=="O":
+                row[j].button(st.session_state["board"][i][j], key="btn"+str(i)+str(j), on_click=set_value, args=[str(i)+str(j)], type="primary")
+            else:
+                row[j].button(st.session_state["board"][i][j], key="btn"+str(i)+str(j), on_click=set_value, args=[str(i)+str(j)])
+    
 if st.session_state["message"]:
     if st.session_state["message"]=="AI":
         st.success("AI is the WINNER.", icon="🤖")
@@ -155,15 +198,15 @@ if st.session_state["play_again"] or not st.session_state["playable"]:
 html_string = '''
 <script>
 // this if is for "play_again" button size
-if (window.parent.document.querySelectorAll("p").length == 12){
+if (window.parent.document.querySelectorAll("p").length == 15){
 
-    window.parent.document.querySelectorAll("p")[11].parentNode.parentNode.style.height="50px";
-    window.parent.document.querySelectorAll("p")[11].parentNode.parentNode.style.width="100px";
+    window.parent.document.querySelectorAll("p")[14].parentNode.parentNode.style.height="50px";
+    window.parent.document.querySelectorAll("p")[14].parentNode.parentNode.style.width="100px";
     
 }
 
 // For removing all classes of buttons
-mainNodes= window.parent.document.querySelectorAll(".row-widget")[0].parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.childNodes
+mainNodes= window.parent.document.querySelectorAll(".row-widget")[1].parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.childNodes
 mainNodes.forEach((row)=>{
 row.childNodes.forEach((element)=>{
 element.className=""
