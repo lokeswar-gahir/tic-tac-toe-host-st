@@ -5,57 +5,60 @@ from checker import get_best_coords_for_streamlit, find_winner
 
 styling = '''
 <style>
-[data-testid="baseButton-secondary"], [data-testid="baseButton-primary"]{
+[data-testid="stBaseButton-secondary"], [data-testid="stBaseButton-primary"]{
 width:100px;
 height:100px;
 }
 [data-testid="stAppViewBlockContainer"]{
 padding: 1rem 1rem 1rem;
 }
-[data-testid="column"]{
+[data-testid="stVerticalBlockBorderWrapper"]{
+/*max-width:371px;*/
+}
+[data-testid="stColumn"]{
 width:102px;
 }
 
 @media (max-width:640px){
-    [data-testid="baseButton-secondary"], [data-testid="baseButton-primary"]{
+    [data-testid="stBaseButton-secondary"], [data-testid="stBaseButton-primary"]{
     width:75px;
     height:75px;
     }
 
-    [data-testid="column"]{
+    [data-testid="stColumn"]{
     width:77px;
     }
 }
 
 @media (max-width:335px){
-    [data-testid="baseButton-secondary"], [data-testid="baseButton-primary"]{
+    [data-testid="stBaseButton-secondary"], [data-testid="stBaseButton-primary"]{
     width:50px;
     height:50px;
     }
 
-    [data-testid="column"]{
+    [data-testid="stColumn"]{
     width:52px;
     }
 }
 
 @media (max-width:260px){
-    [data-testid="baseButton-secondary"], [data-testid="baseButton-primary"]{
+    [data-testid="stBaseButton-secondary"], [data-testid="stBaseButton-primary"]{
     width:38px;
     height:38px;
     }
 
-    [data-testid="column"]{
+    [data-testid="stColumn"]{
     width:40px;
     }
 }
 
 @media (max-width:222px){
-    [data-testid="baseButton-secondary"], [data-testid="baseButton-primary"]{
+    [data-testid="stBaseButton-secondary"], [data-testid="stBaseButton-primary"]{
     width:15px;
     height:15px;
     }
 
-    [data-testid="column"]{
+    [data-testid="stColumn"]{
     width:17px;
     }
 }
@@ -205,13 +208,24 @@ if (window.parent.document.querySelectorAll("p").length == 15){
     
 }
 
-// For removing all classes of buttons
-mainNodes= window.parent.document.querySelectorAll(".row-widget")[1].parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.childNodes
-mainNodes.forEach((row)=>{
-row.childNodes.forEach((element)=>{
-element.className=""
-})
-})
+
+function chan(){
+    nodes=window.parent.document.querySelectorAll('[data-testid="stVerticalBlockBorderWrapper"]');
+    rows = nodes[1].children[0].children[0];
+    if (window.parent.innerWidth >640) {
+        rows.style.display="flex";
+        rows.style.flexDirection="column";
+    }
+    else{
+    
+        rows.style.display="flex";
+        rows.style.flexDirection="row";
+    }
+}
+window.onload = (event) => {
+chan();
+console.log(window.parent.innerWidth);
+};
 
 </script>
 '''
