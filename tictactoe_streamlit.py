@@ -82,8 +82,8 @@ if "message" not in st.session_state:
 st.set_page_config(page_title="TIC-TAC-TOE",page_icon="image.png")
 st.markdown(styling, unsafe_allow_html=True)
 
-st.title("Tic Tac Toe:lt (with AI)")
-st.write("AI will predict the best possible move.:lt Here we go")
+st.title("Tic Tac Toe(with AI)")
+st.write('''AI will predict the best possible move.  \nHere we go''')
 human_player = st.radio("Play As",["X", "O"], horizontal=True)
 container = st.container(border=True)
 row1 = container.columns(3)
